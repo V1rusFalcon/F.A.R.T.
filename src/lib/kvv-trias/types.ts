@@ -13,7 +13,7 @@ export type Platform = {
 
 export type Departure = {
 	lineName: string;
-	direction: string;
+	direction: string[];
 	plannedTime: Date;
 	vehicleType: string;
 	realTime: Date | null;

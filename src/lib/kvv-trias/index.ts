@@ -5,7 +5,7 @@ import { nowBerlinIso } from './time';
 import { buildStopEventRequestXml } from './xml';
 import { postXml } from './http';
 import { parseTriasXml, extractStopEventResults } from './parse';
-import { mapStopEventResultToDeparture, type MappedDeparture } from './map';
+import { mapStopEventResultToDeparture, consolidateWagons, type MappedDeparture } from './map';
 import { KvvTriasError } from './errors';
 import { stopsIdNameMap } from '@/server/stops';
 
@@ -62,17 +62,19 @@ export async function getDepartures(
 
 	const mappedDepartures = results
 		.map(mapStopEventResultToDeparture)
-		.filter((x): x is NonNullable<typeof x> => x != null)
-		.sort((a, b) => {
-			const at = (a.departure.realTime ?? a.departure.plannedTime).getTime();
-			const bt = (b.departure.realTime ?? b.departure.plannedTime).getTime();
-			return at - bt;
-		});
+		.filter((x): x is NonNullable<typeof x> => x != null);
+
+	// Merge duplicate wagon entries, then sort by effective departure time.
+	const deduplicatedDepartures = consolidateWagons(mappedDepartures).sort((a, b) => {
+		const at = (a.departure.realTime ?? a.departure.plannedTime).getTime();
+		const bt = (b.departure.realTime ?? b.departure.plannedTime).getTime();
+		return at - bt;
+	});
 
 	return {
 		stationName,
 		cityName: station.place_name,
-		platforms: groupByPlatform(mappedDepartures)
+		platforms: groupByPlatform(deduplicatedDepartures)
 	};
 }
 

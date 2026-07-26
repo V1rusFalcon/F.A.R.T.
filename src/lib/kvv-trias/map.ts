@@ -7,7 +7,11 @@ export type MappedDeparture = {
 	departure: Departure;
 };
 
-export function mapStopEventResultToDeparture(r: any): MappedDeparture | null {
+type InternalDeparture = MappedDeparture & {
+	lineRef: string;
+};
+
+export function mapStopEventResultToDeparture(r: any): InternalDeparture | null {
 	const stopEvent = r?.StopEvent;
 	const callAtStop = stopEvent?.ThisCall?.CallAtStop;
 
@@ -23,12 +27,14 @@ export function mapStopEventResultToDeparture(r: any): MappedDeparture | null {
 	const realTime = utcIsoToBerlinDate(estimated);
 
 	const service = stopEvent?.Service;
+	const direction = readText(service?.DestinationText);
 
 	return {
+		lineRef: service?.LineRef ?? '',
 		platform: extractPlatform(readText(callAtStop?.PlannedBay)),
 		departure: {
 			lineName: extractLineName(service),
-			direction: readText(service?.DestinationText) ?? '',
+			direction: direction ? [direction] : [],
 			vehicleType: extractVehicleType(service),
 			plannedTime,
 			realTime
@@ -42,6 +48,28 @@ function extractVehicleType(service: any): string {
 		readText(service?.Mode?.Name) ??
 		''
 	);
+}
+
+export function consolidateWagons(departures: InternalDeparture[]): MappedDeparture[] {
+	const uniqueDepartures: InternalDeparture[] = [];
+
+	for (const current of departures) {
+		const match = uniqueDepartures.find(
+			(existing) =>
+				existing.lineRef === current.lineRef &&
+				existing.departure.plannedTime.getTime() === current.departure.plannedTime.getTime() &&
+				existing.departure.realTime?.getTime() === current.departure.realTime?.getTime() &&
+				existing.platform.type === current.platform.type &&
+				existing.platform.name === current.platform.name
+		);
+
+		if (!match) {
+			uniqueDepartures.push(current);
+		}
+	}
+
+	// Strip the internal lineRef before returning.
+	return uniqueDepartures.map(({ lineRef, ...mappedDeparture }) => mappedDeparture);
 }
 
 /**
@@ -87,6 +115,7 @@ function extractPlatform(platformName: string | null): Platform {
 			type: PlatformType.Unknown,
 			name: ''
 		};
+
 	if (platformName.startsWith('Gleis')) {
 		return {
 			type: PlatformType.Rail,
