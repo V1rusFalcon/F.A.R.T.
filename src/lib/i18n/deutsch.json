@@ -31,7 +31,8 @@
     "displayType": "Anzeigeart",
     "departure": "Abfahrt",
     "arrival": "Ankunft",
-    "aboutPage": "Über diese Seite"
+    "aboutPage": "Über diese Seite",
+    "language": "Sprache"
   },
   "search": {
     "placeholder": "Haltestelle suchen..."

@@ -4,7 +4,6 @@ import { page } from '$app/state';
 import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 import { translations } from '$lib/i18n';
-import LanguageSelector from '@/components/ui/language-selector/language-selector.svelte';
 
 let { children } = $props();
 
@@ -29,7 +28,6 @@ function goBack() {
 
 		<h1 class="text-2xl font-bold text-white">{page.data.title || $translations.about.pageTitle}</h1>
 	</div>
-	<LanguageSelector />
 </div>
 
 <main class="space-y-4 p-4">

@@ -3,6 +3,7 @@ import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 import MultiSelect from '@/components/ui/multi-select/multi-select.svelte';
 import { Label } from '$lib/components/ui/label/index.js';
 import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
+import LanguageSelector from '@/components/ui/language-selector/language-selector.svelte';
 import { Github } from 'lucide-svelte';
 	import { resolve } from '$app/paths';
 import { translations } from '$lib/i18n';
@@ -36,6 +37,12 @@ let { platformNames, selectedPlatforms = $bindable(), eventType = $bindable() } 
 							</div>
 						</RadioGroup.Root>
 					</Sidebar.MenuItem>
+
+					<Sidebar.MenuItem class="flex flex-col gap-2 px-2">
+						<span class="font-medium">{$translations.sidebar.language}</span>
+						<LanguageSelector />
+					</Sidebar.MenuItem>
+
 				</Sidebar.Menu>
 			</Sidebar.GroupContent>
 		</Sidebar.Group>

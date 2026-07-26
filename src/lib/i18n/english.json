@@ -31,7 +31,8 @@
 		"displayType": "Display type",
 		"departure": "Departure",
 		"arrival": "Arrival",
-		"aboutPage": "About this page"
+		"aboutPage": "About this page",
+		"language": "Language"
 	},
 	"search": {
 		"placeholder": "Search for a stop..."

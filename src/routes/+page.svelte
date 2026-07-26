@@ -12,7 +12,6 @@ import {
 import { formatTime } from '@/utils';
 import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 import AppSidebar from '@/components/ui/app-sidebar/app-sidebar.svelte';
-import LanguageSelector from '@/components/ui/language-selector/language-selector.svelte';
 import { translations, interpolate } from '$lib/i18n';
 import { PlatformType, type Platform, type StationDepartures } from '@/kvv-trias/types';
 
@@ -119,7 +118,6 @@ function platformName(platformInfo: Platform): string {
 			</div>
 
 			<p class="font-medium text-white">{time}</p>
-			<LanguageSelector />
 			<Sidebar.Trigger class="text-white" />
 		</div>
 
