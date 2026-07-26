@@ -1,11 +1,11 @@
 <script lang="ts">
-import { locale, locales, type Locale } from '$lib/i18n';
+import { setLocale, locale, locales, type Locale } from '$lib/i18n';
 
 let open = $state(false);
 let current = $derived(locales.find((l) => l.code === $locale)!);
 
 function select(code: Locale) {
-	$locale = code;
+	setLocale(code);
 	open = false;
 }
 

@@ -3,7 +3,6 @@ import deutsch from './deutsch.json';
 import english from './english.json';
 
 export type Locale = 'de' | 'en';
-export type Translations = typeof import('$lib/i18n/deutsch.json');
 
 export const locales: { code: Locale; label: string; flag: string }[] = [
 	{ code: 'de', label: 'Deutsch', flag: '🇩🇪' },
@@ -15,27 +14,17 @@ const _translations: Record<Locale, typeof deutsch> = {
 	en: english
 };
 
-function getInitialLocale(): Locale {
-	if (typeof window !== 'undefined') {
-		const saved = localStorage.getItem('locale');
-		if (saved === 'de' || saved === 'en') return saved;
-	}
-	return 'de';
-}
-
-export const locale = writable<Locale>(getInitialLocale());
-
-if (typeof window !== 'undefined') {
-	locale.subscribe((val) => {
-		localStorage.setItem('locale', val);
-	});
-}
+export const locale = writable<Locale>('de');
 
 export const translations = derived(locale, ($locale) => _translations[$locale]);
 
-/**
- * Interpolate placeholders like {key} in a template string.
- */
+export function setLocale(newLocale: Locale) {
+	locale.set(newLocale);
+	if (typeof document !== 'undefined') {
+		document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+	}
+}
+
 export function interpolate(template: string, params: Record<string, string | number>): string {
 	return template.replace(/\{(\w+)\}/g, (_, key) => String(params[key] ?? `{${key}}`));
 }
