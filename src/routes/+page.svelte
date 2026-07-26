@@ -1,7 +1,6 @@
 <script lang="ts">
 import SearchBar from '@/components/ui/searchbar/search-bar.svelte';
 import { onDestroy } from 'svelte';
-import type { ApiResponse } from '@/types/departure';
 import type { PageProps } from './$types';
 import DepartureInfo from '@/components/ui/departure-info/departure-info.svelte';
 import {
@@ -15,6 +14,7 @@ import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 import AppSidebar from '@/components/ui/app-sidebar/app-sidebar.svelte';
 import LanguageSelector from '@/components/ui/language-selector/language-selector.svelte';
 import { translations, interpolate } from '$lib/i18n';
+import { PlatformType, type Platform, type StationDepartures } from '@/kvv-trias/types';
 
 const { data }: PageProps = $props();
 
@@ -22,7 +22,7 @@ let now = $state(new Date());
 let time = $derived(formatTime(now));
 
 let selectedPlatforms: string[] = $state([]);
-let departures: ApiResponse | null = $state(data.model.item);
+let departures: StationDepartures | null = $state(data.model.item);
 let error = $state(data.model.error);
 let departuresToShow = $derived(_filterByPlatformName(departures, selectedPlatforms));
 const platformNames = $derived(_extractPlatformNames(departures));
@@ -78,6 +78,18 @@ function errorMessage(err: { code: string; message: string } | null) {
 
 	return $translations.error.genericMessage + err.message;
 }
+
+function platformName(platformInfo: Platform): string {
+	const platform = platformInfo.name;
+	switch (platformInfo.type) {
+		case PlatformType.Rail:
+			return interpolate($translations.platform.railPlatform, { platform });
+		case PlatformType.Bus:
+			return interpolate($translations.platform.busBay, { platform });
+		case PlatformType.Unknown:
+			return interpolate($translations.platform.unknown, { platform });
+	}
+}
 </script>
 
 <svelte:head>
@@ -125,7 +137,7 @@ function errorMessage(err: { code: string; message: string } | null) {
 					<div class="flex w-full flex-col gap-4">
 						{#each departuresToShow as platformDep}
 							<div class="flex flex-col gap-1">
-								<p class="font-medium">{platformDep.platformName}</p>
+								<p class="font-medium">{platformName(platformDep.platform)}</p>
 								<hr class="h-0.5 rounded-sm bg-gray-500" />
 								{#each platformDep.departures as departure}
 									<DepartureInfo departure={departure} />

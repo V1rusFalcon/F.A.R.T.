@@ -1,8 +1,13 @@
-import type { ApiDeparture, Platform } from './types';
+import type { Departure, Platform } from './types';
 import { PlatformType } from './types';
 import { utcIsoToBerlinDate } from './time';
 
-export function mapStopEventResultToDeparture(r: any): ApiDeparture | null {
+export type MappedDeparture = {
+	platform: Platform;
+	departure: Departure;
+};
+
+export function mapStopEventResultToDeparture(r: any): MappedDeparture | null {
 	const stopEvent = r?.StopEvent;
 	const callAtStop = stopEvent?.ThisCall?.CallAtStop;
 
@@ -20,16 +25,23 @@ export function mapStopEventResultToDeparture(r: any): ApiDeparture | null {
 	const service = stopEvent?.Service;
 
 	return {
-		lineName: extractLineName(service),
-		direction: readText(service?.DestinationText) ?? '',
 		platform: extractPlatform(readText(callAtStop?.PlannedBay)),
-		type:
-			(typeof service?.Mode?.PtMode === 'string' ? service.Mode.PtMode : null) ??
-			readText(service?.Mode?.Name) ??
-			'',
-		plannedTime,
-		realTime
+		departure: {
+			lineName: extractLineName(service),
+			direction: readText(service?.DestinationText) ?? '',
+			vehicleType: extractVehicleType(service),
+			plannedTime,
+			realTime
+		}
 	};
+}
+
+function extractVehicleType(service: any): string {
+	return (
+		(typeof service?.Mode?.PtMode === 'string' ? service.Mode.PtMode : null) ??
+		readText(service?.Mode?.Name) ??
+		''
+	);
 }
 
 /**
@@ -72,23 +84,23 @@ function readText(node: any): string | null {
 function extractPlatform(platformName: string | null): Platform {
 	if (platformName === null || platformName === '')
 		return {
-			type: PlatformType.Unkown,
+			type: PlatformType.Unknown,
 			name: ''
 		};
 	if (platformName.startsWith('Gleis')) {
 		return {
-			type: PlatformType.RailPlatform,
+			type: PlatformType.Rail,
 			name: platformName.substring(6)
 		};
 	} else if (platformName.startsWith('Bstg.')) {
 		return {
-			type: PlatformType.RailPlatform,
+			type: PlatformType.Bus,
 			name: platformName.substring(6)
 		};
 	}
 
 	return {
-		type: PlatformType.RailPlatform,
+		type: PlatformType.Rail,
 		name: platformName
 	};
 }
