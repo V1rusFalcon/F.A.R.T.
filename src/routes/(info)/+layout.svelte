@@ -26,7 +26,7 @@ function goBack() {
 			<ChevronLeft class="h-6 w-6 text-white hover:cursor-pointer" />
 		</button>
 
-		<h1 class="text-2xl font-bold text-white">{page.data.title || $translations.about.pageTitle}</h1>
+		<h1 class="text-2xl font-bold text-white">{page.data.title}</h1>
 	</div>
 </div>
 
