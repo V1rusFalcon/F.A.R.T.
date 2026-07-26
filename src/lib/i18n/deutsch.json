@@ -35,7 +35,11 @@
     "language": "Sprache"
   },
   "search": {
-    "placeholder": "Haltestelle suchen..."
+    "placeholder": "Haltestelle suchen...",
+    "resultsTitle": "Ergebnisse",
+		"stopsNearBy": "Haltestellen in der Nähe",
+		"gpsError": "Standort konnte nicht bestimmt werden.",
+		"noStopsFound": "Keine Haltenstelle konnte gefunden werden."
   },
   "multiSelect": {
     "placeholder": "Wähle ein Gleis aus..."

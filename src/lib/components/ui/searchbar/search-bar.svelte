@@ -104,20 +104,20 @@ function useMyLocation(cache: boolean = false) {
 					<div class="flex grow flex-col gap-2">
 						<div class="flex grow gap-2">
 							<MapPinIcon class="h-4 w-4 opacity-50" />
-							<span>Haltestellen in der Nähe</span>
+							<span>{$translations.search.stopsNearBy}</span>
 							{#if loadingLocation}
 								<Spinner class="ml-auto" />
 							{/if}
 						</div>
 						{#if locationError}
-							<p class="text-xs text-muted-foreground">Standort konnte nicht bestimmt werden.</p>
+							<p class="text-xs text-muted-foreground">{$translations.search.gpsError}</p>
 						{/if}
 					</div>
 				</Command.Item>
 				{#key stops}
-					<Command.Group value="stops" heading="Ergebnisse">
+					<Command.Group value="stops" heading={$translations.search.resultsTitle}>
 						{#if stops.length === 0}
-							<span class="text-sm">Keine Haltenstelle konnte gefunden werden.</span>
+							<span class="text-sm">{$translations.search.noStopsFound}</span>
 						{/if}
 						{#each stops as stop (stop.value)}
 							<Command.Item

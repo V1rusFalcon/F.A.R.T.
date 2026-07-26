@@ -35,7 +35,11 @@
 		"language": "Language"
 	},
 	"search": {
-		"placeholder": "Search for a stop..."
+		"placeholder": "Search for a stop...",
+		"resultsTitle": "Results",
+		"stopsNearBy": "Stops nearby",
+		"gpsError": "Your location could not be determined.",
+		"noStopsFound": "No stop could be found."
 	},
 	"multiSelect": {
 		"placeholder": "Select a platform..."
